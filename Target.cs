@@ -5,6 +5,8 @@ using UnityEngine;
 public class Target : MonoBehaviour
 {
     private Rigidbody targetRb;
+    private GameManager gameManager;
+    public ParticleSystem explosionParticle;
 
     private float minVelocity = 12.0f;
     private float maxVelocity = 16.0f;
@@ -12,12 +14,14 @@ public class Target : MonoBehaviour
     private float minTorque = -10.0f;
     private float xRange = 4.0f;
     private float ySpawnPos = -2.0f;
+    public int pointValue;
 
     // Start is called before the first frame update
     void Start()
     {
         targetRb = GetComponent<Rigidbody>();
-        
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+
         // Generates a random amount of force to swing the object to a certain height value
         targetRb.AddForce(RandomForce(), ForceMode.Impulse);
 
@@ -26,7 +30,7 @@ public class Target : MonoBehaviour
 
 
         transform.position = RandomSpawnPos();
-       
+          
     }
 
     // Update is called once per frame
@@ -50,11 +54,18 @@ public class Target : MonoBehaviour
         return (new Vector3(Random.Range(-xRange, xRange), ySpawnPos));
     }
 
+    /** This method checks for clicks on the target objects and updates the score
+     * 
+     */
     private void OnMouseDown()
     {
         Destroy(gameObject);
+        Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
+        gameManager.UpdateScore(pointValue);
     }
-
+    /** This method mostly destroys the objects when they hit the sensor object collider looming at the bottom of the camera
+     * 
+     */
     private void OnTriggerEnter(Collider other)
     {
         Destroy(gameObject);
