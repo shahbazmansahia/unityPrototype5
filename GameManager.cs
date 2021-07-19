@@ -33,6 +33,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameMusic = GetComponent<AudioSource>();
+        volumeSlide.value = gameMusic.volume;
         //StartGame();
         
     }
@@ -80,6 +82,14 @@ public class GameManager : MonoBehaviour
             GameOver();
             lives = 0;
         }
+    }
+
+    /** Sets the background music volume for the gameMusic audioListener
+     * 
+     */
+    public void SetBgVolume(float val)
+    {
+        gameMusic.volume = val;
     }
 
     /** Spawns the game over screen elements and gives us the option to restart the game
@@ -143,10 +153,9 @@ public class GameManager : MonoBehaviour
         }
         volumeSlide.gameObject.SetActive(true);
         BackButt.gameObject.SetActive(true);
-        while (volumeSlide.IsActive())
-        {
-            gameMusic.volume = volumeSlide.value;
-        }
+        
+        Debug.Log("Volume Val:" + volumeSlide.value);
+        volumeSlide.onValueChanged.AddListener(SetBgVolume);
         
     }
 
