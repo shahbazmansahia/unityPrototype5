@@ -57,6 +57,7 @@ public class Target : MonoBehaviour
     /** This method checks for clicks on the target objects and updates the score
      * 
      */
+    /*  We are disabling this to enable the click-and-swipe functionality; this has been made redundant due to the destroy target method
     private void OnMouseDown()
     {
         if (gameManager.isGameActive)
@@ -66,6 +67,22 @@ public class Target : MonoBehaviour
             gameManager.UpdateScore(pointValue);
         }
     }
+    */
+
+    /** This function is implemented to aid with the trail/click-and-swipe collision system we implemented
+     * 
+     */
+    public void DestroyTarget()
+    {
+        if (gameManager.isGameActive)
+        {
+            Destroy(gameObject);
+            Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
+            gameManager.UpdateScore(pointValue);
+        }
+    }
+
+
     /** This method mostly destroys the objects when they hit the sensor object collider looming at the bottom of the camera
      * 
      */
@@ -77,4 +94,6 @@ public class Target : MonoBehaviour
             gameManager.UpdateLives(-1);
         }
     }
+
+    
 }
