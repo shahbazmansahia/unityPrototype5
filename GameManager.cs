@@ -11,8 +11,11 @@ public class GameManager : MonoBehaviour
     private float spawnRate = 1.0f;
 
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI livesText;
     public TextMeshProUGUI gameOverText;
     public TextMeshProUGUI titleText;
+    public Slider volumeSlide;
+    
     public Button restartButton;
     public Button startButton;
     public Button exitButton;
@@ -21,8 +24,12 @@ public class GameManager : MonoBehaviour
     public GameObject titleScreen;
 
     private int score;
+    private int lives;
+    private int bgMusicVol;
 
     public bool isGameActive;
+
+    private AudioSource gameMusic;
     // Start is called before the first frame update
     void Start()
     {
@@ -48,13 +55,31 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    /** This method repeatedly updates the score value and views the string when it is called
+    /** This method repeatedly updates the score value and displays the string when it is called
      * 
      */
     public void UpdateScore(int value)
     {
         score += value;
         scoreText.text = "Score: " + score;
+    }
+
+    /** This function repeatedly updates the lives value and displays the string when it is called
+     * 
+     */
+    public void UpdateLives(int value)
+    {
+        Debug.Log("Update Lives called!");
+        lives += value;
+        livesText.text = "Lives: " + lives;
+        Debug.Log("Lives: " + lives);
+        Debug.Log(livesText.text);
+
+        if (lives <= 0)
+        {
+            GameOver();
+            lives = 0;
+        }
     }
 
     /** Spawns the game over screen elements and gives us the option to restart the game
@@ -88,8 +113,11 @@ public class GameManager : MonoBehaviour
         StartCoroutine(SpawnTarget());
         score = 0;
         UpdateScore(0);
+        UpdateLives(3);
         spawnRate /= difficulty;
         titleScreen.gameObject.SetActive(false);
+        gameMusic = GetComponent<AudioSource>();
+        
         
     }
 
@@ -108,13 +136,18 @@ public class GameManager : MonoBehaviour
     {
         startButton.gameObject.SetActive(false);
         exitButton.gameObject.SetActive(false);
-
+        
         for (int i = 0; i < difficultyButtons.Length; i++)
         {
             difficultyButtons[i].gameObject.SetActive(true);
         }
-
+        volumeSlide.gameObject.SetActive(true);
         BackButt.gameObject.SetActive(true);
+        while (volumeSlide.IsActive())
+        {
+            gameMusic.volume = volumeSlide.value;
+        }
+        
     }
 
     /** This method makes us go back to the title screen at the start.
@@ -129,7 +162,7 @@ public class GameManager : MonoBehaviour
         {
             difficultyButtons[i].gameObject.SetActive(false);
         }
-
+        volumeSlide.gameObject.SetActive(false);
         BackButt.gameObject.SetActive(false);
     }
 }
