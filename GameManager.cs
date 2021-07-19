@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI livesText;
     public TextMeshProUGUI gameOverText;
     public TextMeshProUGUI titleText;
+    public TextMeshProUGUI pauseText;
     public Slider volumeSlide;
     
     public Button restartButton;
@@ -28,6 +29,7 @@ public class GameManager : MonoBehaviour
     private int bgMusicVol;
 
     public bool isGameActive;
+    public bool isPaused;
 
     private AudioSource gameMusic;
     // Start is called before the first frame update
@@ -42,7 +44,11 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            isPaused = !isPaused;
+            PauseGame(isPaused);
+        }
     }
 
     IEnumerator SpawnTarget()
@@ -118,6 +124,7 @@ public class GameManager : MonoBehaviour
     public void StartGame(int difficulty)
     {
         isGameActive = true;
+        isPaused = false;
         gameOverText.gameObject.SetActive(false);
         restartButton.gameObject.SetActive(false);
         StartCoroutine(SpawnTarget());
@@ -127,6 +134,8 @@ public class GameManager : MonoBehaviour
         spawnRate /= difficulty;
         titleScreen.gameObject.SetActive(false);
         gameMusic = GetComponent<AudioSource>();
+
+        Debug.Log("Time Scale: " + Time.timeScale);
         
         
     }
@@ -173,5 +182,12 @@ public class GameManager : MonoBehaviour
         }
         volumeSlide.gameObject.SetActive(false);
         BackButt.gameObject.SetActive(false);
+    }
+
+    public void PauseGame(bool val)
+    {
+        pauseText.gameObject.SetActive(val);
+        gameMusic.mute = val;
+        Time.timeScale = (val)? 0 : 1; 
     }
 }
